@@ -1,0 +1,26 @@
+"dns": {
+    "disableCache": true,
+    "hosts": {
+      "geosite:category-ads-all": "127.0.0.1",
+      "domain:googleapis.cn": "googleapis.com"
+    },
+    "servers": [
+        "8.8.8.8",
+        "8.8.4.4",
+        "1.1.1.1",
+      {
+        "address": "8.8.8.8",
+        "port": 53
+      },
+
+      {
+        "address": "1.1.1.1",
+        "expectIPs": [
+          "geoip:cn"
+        ],
+        "port": 53
+      }
+    ]
+},
+
+

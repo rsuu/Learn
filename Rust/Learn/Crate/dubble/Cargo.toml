@@ -1,0 +1,12 @@
+[package]
+name = "dubble"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+dubble = "0.1.0"
+
+image = { version = "*", default-features = false, features = ["jpeg"] }
+ufb = "0.2.1"

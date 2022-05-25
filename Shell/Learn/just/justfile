@@ -1,0 +1,28 @@
+recipe-name:
+    echo 'This is a recipe!'
+
+another-recipe:
+    @echo 'This is another recipe.'
+
+set positional-arguments := true
+
+# Aliases
+
+alias b := build
+
+# if (test == true) { build }
+test: build
+    echo 'test: build'
+
+build:
+    echo 'build'
+
+sloc:
+    echo 'sloc'
+
+other:
+    echo 'other'
+
+@fn arg:
+    echo $0
+    echo $1

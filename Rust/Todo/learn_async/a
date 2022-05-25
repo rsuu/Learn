@@ -1,0 +1,4 @@
+[path]
+permanent = "./" # aaa
+fleeting= "b"
+literature="./"

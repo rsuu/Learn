@@ -1,0 +1,7 @@
+# bar
+
+```sh
+cargo run
+
+
+```

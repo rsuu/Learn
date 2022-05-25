@@ -1,0 +1,42 @@
+"outbounds": [
+    {
+      "mux": {
+        "concurrency": 8,
+        "enabled": false
+      },
+      "protocol": $protocol,
+      "settings": {
+        "vnext": [
+          {
+            "address": $address,
+            "port": $port,
+            "users": [
+              {
+                "alterId": $aid,
+                "encryption": "",
+                "flow": "",
+                "id": $users_id,
+                "level": 8,
+                "security": "auto"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": $network,
+        "security": "tls",
+  "tlsSettings": {
+          "allowInsecure": true,
+          "serverName": $host
+        },
+        "wsSettings": {
+          "headers": {
+            "Host": $host
+          },
+          "path": $path
+        }
+      },
+      "tag": "proxy"
+    }
+     ],

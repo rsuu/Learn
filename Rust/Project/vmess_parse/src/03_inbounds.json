@@ -1,0 +1,22 @@
+"inbounds": [
+        {
+            "listen": "127.0.0.1",
+            "port": 8889,
+            "protocol": "http",
+            "settings": {
+        "userLevel": 8
+            },
+      "tag": "http"
+        },
+        {
+            "listen": "127.0.0.1",
+            "port": 1089,
+            "protocol": "socks",
+            "settings": {
+                "auth": "noauth",
+                "udp": true,
+        "userLevel": 8
+            },
+            "tag": "socks"
+        }
+    ],

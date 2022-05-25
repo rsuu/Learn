@@ -1,0 +1,20 @@
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq)]
+pub enum Key {
+    Backspace,
+    Left,
+    Right,
+    Up,
+    Down,
+    PageUp,
+    PageDown,
+    BackTab,
+    Delete,
+    Insert,
+    F(u8),
+    Char(char),
+    Alt(char),
+    Ctrl(char),
+    Null,
+    Esc,
+    Tab,
+}

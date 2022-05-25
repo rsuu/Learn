@@ -1,0 +1,16 @@
+[package]
+name = "learn_async"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+futures = "0.3.21"
+nix = "0.23.1"
+serde = "1.0.136"
+serde_yaml = "0.8.23"
+signal-hook = "0.3.13"
+tokio = "1.17.0"
+toml = "0.5.8"
+toml_edit = "0.14.2"

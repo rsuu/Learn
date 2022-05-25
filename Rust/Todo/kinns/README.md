@@ -1,0 +1,6 @@
+# kinns
+
+## linux
+
+
+k

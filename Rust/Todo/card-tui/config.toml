@@ -1,0 +1,8 @@
+[keymap.org]
+a = "print1"
+
+[keymap.ctrl]
+f = "print3"
+
+[keymap.alt]
+n = "print1"
