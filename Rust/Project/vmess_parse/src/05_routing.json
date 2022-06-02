@@ -1,4 +1,5 @@
 "routing": {
+    "domainMatcher": "mph",
     "domainStrategy": "IPIfNonMatch",
     "rules": [
       {
@@ -22,6 +23,32 @@
         ],
         "outboundTag": "direct",
         "port": "53",
+        "type": "field"
+      },
+      {
+        "domain": [
+          "domain:googleapis.cn"
+        ],
+        "outboundTag": "proxy",
+        "type": "field"
+      },
+      {
+        "domain": [
+          "geosite:google",
+          "geosite:github",
+          "geosite:netflix",
+          "geosite:steam",
+          "geosite:telegram",
+          "geosite:tumblr",
+          "geosite:speedtest",
+          "geosite:bbc",
+          "domain:gvt1.com",
+          "domain:textnow.com",
+          "domain:twitch.tv",
+          "domain:wikileaks.org",
+          "domain:naver.com"
+        ],
+        "outboundTag": "proxy",
         "type": "field"
       },
       {
@@ -54,3 +81,4 @@
       }
     ]
   }
+

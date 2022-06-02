@@ -1,6 +1,43 @@
 use std::fs::OpenOptions;
 use std::io::{Read, Write};
-use std::{fs, io, mem, path};
+use std::{fs, io, mem};
+
+fn main() {
+    let s: Vec<A> = vec![
+        A {
+            a: [0, 2],
+            s: "cac",
+        },
+        A {
+            a: [0, 1],
+            s: "akasssssssssssssssssasdasdki",
+        },
+    ];
+
+    let type_size: usize = mem::size_of::<A>();
+
+    let mut bytes: Vec<u8> = Vec::with_capacity(type_size * s.len());
+
+    for f in s.iter() {
+        bytes.extend_from_slice(f.as_bytes());
+        //println!("{:?}", bytes);
+    }
+
+    let file = "test";
+    if let Ok(_) = fs::File::create(file) {
+        append_bytes(file, bytes.as_slice()).unwrap();
+    }
+
+    let bytes = read_bytes("test").expect("");
+    let bytes = bytes.as_slice();
+    //println!("{:?}", bytes);
+
+    let mut bytes_slice = BytesSlice::new(bytes, type_size);
+
+    //println!("{}", bytes_slice.slice_len);
+    let v = bytes_slice.to_vec_struct::<A>().expect("");
+    println!("{:#?}", v);
+}
 
 #[derive(Debug, Copy, Clone)]
 struct A<'a> {
@@ -14,12 +51,60 @@ struct B<'a> {
     s: &'a str,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 struct BytesSlice<'a> {
     slice: &'a [u8],
     size: usize,
     slice_len: usize,
     max: usize,
+    start: usize,
+}
+
+impl<'a> BytesSlice<'a> {
+    pub fn new(slice: &'a [u8], size: usize) -> Self {
+        Self {
+            slice,
+            size,
+            slice_len: slice.len(),
+            max: slice.len() / size,
+            start: 0,
+        }
+    }
+    pub fn read(&mut self) -> &[u8] {
+        let s = &(self.slice[self.start..self.start + self.size]);
+        //println!("{}", self.slice_len);
+        (*self).start += self.size;
+        //println!("{:?}", s);
+
+        s
+    }
+
+    pub fn to_struct<T>(&mut self) -> &T
+    where
+        T: Sized + Copy + BytesExt,
+    {
+        <T as BytesExt>::from_ref(self.read())
+    }
+
+    pub fn to_vec_struct<T>(&mut self) -> Result<Vec<T>, ()>
+    where
+        T: Sized + Copy + BytesExt,
+    {
+        if self.max > 0 {
+            let mut v: Vec<T> = Vec::with_capacity(self.slice_len);
+
+            for _f in 0..self.max {
+                // println!("{}", _f);
+
+                let s = self.to_struct::<T>();
+                v.push(*s);
+            }
+
+            Ok(v)
+        } else {
+            Err(())
+        }
+    }
 }
 
 trait BytesExt: Sized {
@@ -46,8 +131,8 @@ where
 }
 
 pub fn read_bytes(file: &str) -> io::Result<Vec<u8>> {
-    let mut f = fs::File::open(&file).expect("no file found");
-    let metadata = fs::metadata(&file).expect("unable to read metadata");
+    let mut f = fs::File::open(&file)?;
+    let metadata = fs::metadata(&file)?;
     let mut buffer = vec![0; metadata.len() as usize];
 
     f.read_exact(&mut buffer)?;
@@ -56,83 +141,9 @@ pub fn read_bytes(file: &str) -> io::Result<Vec<u8>> {
 }
 
 pub fn append_bytes(file: &str, bytes: &[u8]) -> io::Result<()> {
-    let mut f = OpenOptions::new()
-        .write(true)
-        .append(true)
-        .open(file)
-        .expect("");
+    let mut f = OpenOptions::new().write(true).append(true).open(file)?;
 
     f.write_all(bytes)
-}
-
-impl<'a> BytesSlice<'a> {
-    pub fn read(&mut self) -> &[u8] {
-        let s = &(self.slice[0..self.size]);
-        self.slice_len -= self.size;
-        s
-    }
-
-    pub fn to_struct<T>(&mut self) -> &T
-    where
-        T: Sized + Copy + BytesExt,
-    {
-        let b = self.read();
-        <T as BytesExt>::from_ref(b)
-    }
-
-    pub fn to_vec_struct<T>(&mut self, v: &mut Vec<T>)
-    where
-        T: Sized + Copy + BytesExt,
-    {
-        for _f in 0..self.max {
-            let s = self.to_struct::<T>();
-            v.push(*s);
-        }
-    }
-}
-
-fn main() {
-    let val_size: usize = mem::size_of::<A>();
-
-    let s: Vec<A> = vec![
-        A {
-            a: [0, 2],
-            s: "ccc",
-        },
-        A {
-            a: [0, 1],
-            s: "akasssssssssssssssssasdasdki",
-        },
-    ];
-
-    let mut bytes: Vec<u8> = Vec::with_capacity(val_size * s.len());
-
-    for f in s.iter() {
-        bytes.extend_from_slice(f.as_bytes());
-    }
-
-    let file = "test";
-    if let Ok(_) = fs::File::create(file) {
-        append_bytes(file, bytes.as_slice()).unwrap();
-    }
-
-    let bytes = read_bytes("test").expect("");
-    let bytes = bytes.as_slice();
-
-    let mut bytes_slice = BytesSlice {
-        slice: bytes,
-        size: val_size,
-        slice_len: bytes.len(),
-        max: bytes.len() / val_size,
-    };
-
-    if bytes_slice.slice_len > 0 {
-        let mut v: Vec<A> = Vec::with_capacity(bytes_slice.slice_len);
-
-        bytes_slice.to_vec_struct(&mut v);
-
-        println!("{:#?}", v);
-    }
 }
 
 // https://github.com/rust-lang/project-safe-transmute/blob/master/rfcs/0000-ext-byte-transmutation.md

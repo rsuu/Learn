@@ -1,26 +1,45 @@
-"dns": {
-    "disableCache": true,
+  "dns": {
     "hosts": {
       "geosite:category-ads-all": "127.0.0.1",
       "domain:googleapis.cn": "googleapis.com"
     },
     "servers": [
-        "8.8.8.8",
-        "8.8.4.4",
-        "1.1.1.1",
+      "8.8.8.8",
       {
         "address": "8.8.8.8",
+        "domains": [
+          "geosite:google",
+          "geosite:github",
+          "geosite:netflix",
+          "geosite:steam",
+          "geosite:telegram",
+          "geosite:tumblr",
+          "geosite:speedtest",
+          "geosite:bbc",
+          "domain:gvt1.com",
+          "domain:textnow.com",
+          "domain:twitch.tv",
+          "domain:wikileaks.org",
+          "domain:naver.com"
+        ],
         "port": 53
       },
-
       {
         "address": "1.1.1.1",
+        "domains": [
+          "geosite:cn"
+        ],
         "expectIPs": [
           "geoip:cn"
         ],
         "port": 53
       }
     ]
-},
-
+  },
+  "fakedns": [
+    {
+      "ipPool": "198.18.0.0/15",
+      "poolSize": 10000
+    }
+  ],
 

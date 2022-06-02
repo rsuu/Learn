@@ -1,22 +1,40 @@
-"inbounds": [
-        {
-            "listen": "127.0.0.1",
-            "port": 8889,
-            "protocol": "http",
-            "settings": {
+  "inbounds": [
+    {
+      "listen": "127.0.0.1",
+      "port": 1089,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "udp": true,
         "userLevel": 8
-            },
+      },
+      "sniffing": {
+        "destOverride": [
+          "fakedns"
+        ],
+        "enabled": true
+      },
+      "tag": "socks"
+    },
+    {
+      "listen": "127.0.0.1",
+      "port": 8889,
+      "protocol": "http",
+      "settings": {
+        "userLevel": 8
+      },
       "tag": "http"
-        },
-        {
-            "listen": "127.0.0.1",
-            "port": 1089,
-            "protocol": "socks",
-            "settings": {
-                "auth": "noauth",
-                "udp": true,
-        "userLevel": 8
-            },
-            "tag": "socks"
-        }
-    ],
+    },
+    {
+      "listen": "127.0.0.1",
+      "port": 10853,
+      "protocol": "dokodemo-door",
+      "settings": {
+        "address": "8.8.8.8",
+        "network": "tcp,udp",
+        "port": 53
+      },
+      "tag": "dns-in"
+    }
+  ],
+

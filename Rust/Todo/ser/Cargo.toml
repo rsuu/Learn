@@ -1,0 +1,13 @@
+[package]
+name = "ser"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+base64 = "0.13.0"
+#speedy = "0.8.2"
+speedy = {version="*" ,path="/root/t/speedy",features = ["uuid"]}
+time = "0.3.9"
+uuid = { version = "1.1.0", features = ["v4"] }
