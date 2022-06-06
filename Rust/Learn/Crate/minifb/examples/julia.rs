@@ -71,8 +71,8 @@ fn map(val: f64, start1: f64, stop1: f64, start2: f64, stop2: f64) -> f64 {
 
 fn fill(n: u32) -> u32 {
     if FRACTAL_DEPTH == n {
-        return 0x00;
+        0x00
     } else {
-        return n * 32 % 255;
+        n * 32 % 255
     }
 }

@@ -54,9 +54,7 @@ fn main() {
             }
         });
 
-        window.get_scroll_wheel().map(|scroll| {
-            println!("Scrolling {} - {}", scroll.0, scroll.1);
-        });
+        if let Some(scroll) = window.get_scroll_wheel() { println!("Scrolling {} - {}", scroll.0, scroll.1) }
 
         // We unwrap here as we want this code to exit if it fails
         window

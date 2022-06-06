@@ -8,3 +8,4 @@ edition = "2018"
 [dependencies]
 minifb = { version = "0.20", features = ["x11"] }
 image = { version = "0.23", features = ["jpeg_rayon"] }
+png = "0.17.5"

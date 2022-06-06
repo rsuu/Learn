@@ -1,5 +1,5 @@
 use image::GenericImageView;
-use minifb::{Key, Scale, ScaleMode, Window, WindowOptions};
+use minifb::{Key, Scale, ScaleMode, Window};
 use std::cmp;
 
 pub trait DrawExt {
@@ -69,7 +69,7 @@ fn main() {
         img_path: image::open(&args[5]).unwrap(),
     };
 
-    let imgmeta = Imgmeta {
+    let _imgmeta = Imgmeta {
         size: std::fs::metadata(&args[5]).unwrap().len(),
 
         w_h: winmeta.img_path.dimensions(),

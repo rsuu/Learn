@@ -1,18 +1,11 @@
-use minifb::{Key, ScaleMode, Window, WindowOptions};
+use minifb::{Key, Scale, ScaleMode, Window, WindowOptions};
+use std::fs::File;
 
 fn main() {
-    use std::fs::File;
-    // The decoder is a build for reader and can be used to set various decoding options
-    // via `Transformations`. The default output transformation is `Transformations::EXPAND
-    // | Transformations::STRIP_ALPHA`.
-    let decoder = Decoder::new(File::open("resources/uv.png").unwrap());
-    let (info, mut reader) = decoder.read_info().unwrap();
-    // Allocate the output buffer.
-    let mut buf = vec![0; info.buffer_size()];
-    // Read the next frame. Currently this function should only called once.
-    // The default options
+    let decoder = png::Decoder::new(File::open("test.png").unwrap());
+    let mut reader = decoder.read_info().unwrap();
+    let mut buf = vec![0; reader.output_buffer_size()];
     reader.next_frame(&mut buf).unwrap();
-    // convert buffer to u32
 
     let u32_buffer: Vec<u32> = buf
         .chunks(3)
@@ -21,19 +14,30 @@ fn main() {
 
     let mut window = Window::new(
         "Noise Test - Press ESC to exit",
-        info.width as usize,
-        info.height as usize,
+        reader.info().width as usize,
+        reader.info().height as usize,
         WindowOptions {
+            borderless: true,
+            transparency: true,
+            title: false,
             resize: true,
+            topmost: false,
+            none: false,
             scale_mode: ScaleMode::Center,
-            ..WindowOptions::default()
+            scale: Scale::X1,
         },
     )
     .expect("Unable to open Window");
 
+    window.set_position(0, 0);
+
     while window.is_open() && !window.is_key_down(Key::Escape) {
         window
-            .update_with_buffer(&u32_buffer, info.width as usize, info.height as usize)
+            .update_with_buffer(
+                &u32_buffer,
+                reader.info().width as usize,
+                reader.info().height as usize,
+            )
             .unwrap();
     }
 }
