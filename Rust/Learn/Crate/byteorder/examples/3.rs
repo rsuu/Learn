@@ -3,6 +3,11 @@ use std::io::{Read, Write};
 use std::{fs, io, mem};
 
 fn main() {
+    //test_a();
+    test_b();
+}
+
+fn test_a() {
     let s: Vec<A> = vec![
         A {
             a: [0, 2],
@@ -15,6 +20,7 @@ fn main() {
     ];
 
     let type_size: usize = mem::size_of::<A>();
+    // rustc -Z print-type-sizes 3.rs
 
     let mut bytes: Vec<u8> = Vec::with_capacity(type_size * s.len());
 
@@ -23,6 +29,7 @@ fn main() {
         //println!("{:?}", bytes);
     }
 
+    // write
     let file = "test";
     if let Ok(_) = fs::File::create(file) {
         append_bytes(file, bytes.as_slice()).unwrap();
@@ -32,22 +39,62 @@ fn main() {
     let bytes = bytes.as_slice();
     //println!("{:?}", bytes);
 
+    // read
     let mut bytes_slice = BytesSlice::new(bytes, type_size);
-
     //println!("{}", bytes_slice.slice_len);
     let v = bytes_slice.to_vec_struct::<A>().expect("");
     println!("{:#?}", v);
 }
 
+fn test_b() {
+    let s: Vec<B> = vec![
+        B {
+            a: [0, 2, 0],
+            s: "cac",
+            d: vec![1],
+            c: 0,
+        },
+        B {
+            a: [0, 1, 0],
+            d: vec![1],
+            c: 1,
+            s: "akasssssssssssssssssasdasdki",
+        },
+    ];
+
+    let type_size: usize = mem::size_of::<B>();
+    let mut bytes: Vec<u8> = Vec::with_capacity(type_size * s.len());
+
+    for f in s.iter() {
+        bytes.extend_from_slice(f.as_bytes());
+    }
+
+    let file = "test";
+    if let Ok(_) = fs::File::create(file) {
+        append_bytes(file, bytes.as_slice()).unwrap();
+    }
+
+    let bytes = read_bytes("test").expect("");
+    let bytes = bytes.as_slice();
+
+    let mut bytes_slice = BytesSlice::new(bytes, type_size);
+    let v = bytes_slice.to_vec_struct_clone::<B>().expect("");
+    println!("{:#?}", v);
+}
+
 #[derive(Debug, Copy, Clone)]
+#[repr(C)]
+#[repr(packed)]
 struct A<'a> {
     a: [u8; 2],
     s: &'a str,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 struct B<'a> {
     a: [u8; 3],
+    c: u8,
+    d: Vec<u8>,
     s: &'a str,
 }
 
@@ -79,7 +126,7 @@ impl<'a> BytesSlice<'a> {
         s
     }
 
-    pub fn to_struct<T>(&mut self) -> &T
+    pub fn as_struct<T>(&mut self) -> &T
     where
         T: Sized + Copy + BytesExt,
     {
@@ -96,8 +143,35 @@ impl<'a> BytesSlice<'a> {
             for _f in 0..self.max {
                 // println!("{}", _f);
 
-                let s = self.to_struct::<T>();
+                let s = self.as_struct::<T>();
                 v.push(*s);
+            }
+
+            Ok(v)
+        } else {
+            Err(())
+        }
+    }
+
+    pub fn to_struct<T>(&mut self) -> &T
+    where
+        T: Sized + Clone + BytesExt,
+    {
+        <T as BytesExt>::from_ref(self.read())
+    }
+
+    pub fn to_vec_struct_clone<T>(&mut self) -> Result<Vec<T>, ()>
+    where
+        T: Sized + Clone + BytesExt,
+    {
+        if self.max > 0 {
+            let mut v: Vec<T> = Vec::with_capacity(self.slice_len);
+
+            for _f in 0..self.max {
+                // println!("{}", _f);
+
+                let s = self.to_struct::<T>();
+                v.push(s.clone());
             }
 
             Ok(v)
@@ -115,6 +189,24 @@ trait BytesExt: Sized {
 impl<'a> BytesExt for A<'a>
 where
     Self: Sized + Copy,
+{
+    fn as_bytes(&self) -> &[u8] {
+        unsafe {
+            std::slice::from_raw_parts(
+                (self as *const Self) as *const u8,
+                std::mem::size_of::<Self>(),
+            )
+        }
+    }
+    fn from_ref(buf: &[u8]) -> &Self {
+        let p: *const Self = buf.as_ptr() as *const Self;
+        unsafe { &*p }
+    }
+}
+
+impl<'a> BytesExt for B<'a>
+where
+    Self: Sized + Clone,
 {
     fn as_bytes(&self) -> &[u8] {
         unsafe {
